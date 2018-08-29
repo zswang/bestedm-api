@@ -4,6 +4,21 @@ import * as xml2js from 'xml2js'
 
 const apiHost = `http://www.bestedm.org/mm-ms/apinew/`
 
+export type FailType =
+  | 'format_error'
+  | 9
+  | 'format_error'
+  | 8
+  | 'not_exist'
+  | 1
+  | 'over_quota'
+  | 2
+  | 'user_reject'
+  | 3
+  | 5
+  | 'all'
+  | -1
+
 export interface IBaseEdmOptions {
   debug?: boolean
   user: string
@@ -260,25 +275,36 @@ export class BestEdm extends RequestBase {
   /**
    * 导出发送失败地址
    */
-  failexport(params: {
-    date: string
-    type:
-      | 'format_error'
-      | 9
-      | 'format_error'
-      | 8
-      | 'not_exist'
-      | 1
-      | 'over_quota'
-      | 2
-      | 'user_reject'
-      | 3
-      | 5
-      | 'all'
-      | -1
-  }): Promise<string[]> {
+  failexport(params: { date: string; type: FailType }): Promise<string[]> {
     return this.request(
       `${apiHost}failexport.php?out_type=json&${querystring.stringify(params)}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      }
+    )
+  }
+
+  /**
+   * 导出发送失败地址
+   */
+  failexportall(params: {
+    date: string
+    type: FailType
+  }): Promise<
+    {
+      email: string
+      type: string
+      task_id: string
+    }[]
+  > {
+    return this.request(
+      `${apiHost}failexportall.php?out_type=json&${querystring.stringify(
+        params
+      )}`,
       {
         headers: {
           Authorization: `Basic ${new Buffer(
