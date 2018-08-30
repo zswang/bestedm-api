@@ -21,6 +21,12 @@ export interface IBaseEdmOptions {
   user: string
   pass: string
 }
+export interface IResult {
+  result: {
+    status: string
+    data: string
+  }
+}
 export interface ICustomerInfo {
   customer: {
     id: string
@@ -86,6 +92,21 @@ export interface ITask {
   send_status: string
   track_status: string
 }
+export interface ITaskInfo {
+  task_id: string
+  task_date: string
+  task_ident: string
+  totalsum: string
+  total: string
+  invalid: string
+  failed: string
+  success: string
+  email_not_exist: string
+  actual: string
+  over_quota: string
+  user_reject: string
+  rubbish: string
+}
 export interface ITaskDetail {
   id: string
   sn: string
@@ -134,6 +155,36 @@ export interface IStatistic {
     actual_deduc: string
   }
 }
+export interface ITrack {
+  track: {
+    track_id: string
+    task_id: string
+    task_sn: string
+    send_count: string
+    real_send_count: string
+    error_send_count: string
+    open_unique: string
+    open_total: string
+    open_first: string
+    open_last: string
+    click_unique: string
+    click_total: string
+    click_first: string
+    click_last: string
+    open_ratio: string
+    click_ratio: string
+    link_statistic: string
+  }
+}
+export interface IMailListBase {
+  subject?: string
+  description?: string
+  status?: 'enabled' | 'disabled'
+}
+export interface IMailList extends IMailListBase {
+  id: string
+  count: string
+}
 export class BestEdm extends RequestBase {
   options: IBaseEdmOptions
   constructor(options: IBaseEdmOptions) {
@@ -157,7 +208,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:170 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:226 parseString`, err)
             return
           }
           result = reply
@@ -183,7 +234,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:197 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:253 parseString`, err)
             return
           }
           result = reply
@@ -218,7 +269,7 @@ export class BestEdm extends RequestBase {
           { explicitArray: false, trim: true },
           (err, reply) => {
             if (err) {
-              console.log(`bestedm-api/src/index.ts:233 parseString`, err)
+              console.log(`bestedm-api/src/index.ts:289 parseString`, err)
               return
             }
             result = reply
@@ -249,7 +300,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:265 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:321 parseString`, err)
             return
           }
           result = reply
@@ -300,6 +351,365 @@ export class BestEdm extends RequestBase {
     )
   }
   /**
+   * 指定日期或者指定邮件批次发送统计表信息
+   * @param params
+   */
+  stask(params: {
+    date?: string
+    ident?: string
+    id?: string
+  }): Promise<{
+    data: {
+      task: ITaskInfo[]
+    }
+  }> {
+    return this.request(
+      `${apiHost}stask.php?${querystring.stringify(params)}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`bestedm-api/src/index.ts:400 parseString`, err)
+            return
+          }
+          result = reply
+          if (result.data && !(result.data.task instanceof Array)) {
+            result.data.task = [result.data.task]
+          }
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 获取指定群发任务的跟踪统计概览
+   * @param params
+   */
+  overview(params: {
+    id?: string
+    ident?: string
+  }): Promise<{
+    data: { task: ITaskInfo }
+  }> {
+    return this.request(
+      `${apiHost}track.php?do=overview&${querystring.stringify(params)}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`bestedm-api/src/index.ts:436 parseString`, err)
+            return
+          }
+          result = reply
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 获取指定群发任务邮件打开统计详情
+   * @param params
+   */
+  openDetail(params: { id?: string; ident?: string }) {
+    return this.request(
+      `${apiHost}track.php?do=open-detail&${querystring.stringify(params)}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`bestedm-api/src/index.ts:464 parseString`, err)
+            return
+          }
+          result = reply
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 导出指定群发任务跟踪统计邮箱信息
+   * @param params
+   */
+  trackexport(params: {
+    track_id?: string
+    is_click?: string
+    link_id?: string
+    email_id?: string
+  }) {
+    return this.request(
+      `${apiHost}trackexport.php?${querystring.stringify(params)}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`bestedm-api/src/index.ts:497 parseString`, err)
+            return
+          }
+          result = reply
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 指定批次的邮件各链接的点击统计
+   * @param params
+   */
+  linkStat(params: { id?: string; ident?: string; link_id?: string }) {
+    return this.request(
+      `${apiHost}track.php?do=link-stat&${querystring.stringify(params)}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`bestedm-api/src/index.ts:525 parseString`, err)
+            return
+          }
+          result = reply
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 获取指定群发任务邮件打开统计详情
+   * @param params
+   */
+  clickDetail(params: { id?: string; ident?: string; link_id?: string }) {
+    return this.request(
+      `${apiHost}track.php?do=click-detail&${querystring.stringify(params)}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`bestedm-api/src/index.ts:553 parseString`, err)
+            return
+          }
+          result = reply
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 取得联系人分类列表
+   */
+  maillistList(): Promise<{
+    maillist: { item: IMailList[] }
+  }> {
+    return this.request(
+      `${apiHost}mloperate.php?do=maillist-list`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`bestedm-api/src/index.ts:582 parseString`, err)
+            return
+          }
+          result = reply
+          if (result.maillist && !(result.maillist.item instanceof Array)) {
+            result.maillist.item = [result.maillist]
+          }
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 取得联系人分类详情
+   */
+  maillistDetail(
+    id: string
+  ): Promise<{
+    maillist: IMailList
+  }> {
+    return this.request(
+      `${apiHost}mloperate.php?do=maillist-detail&${querystring.stringify({
+        id: id,
+      })}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`bestedm-api/src/index.ts:618 parseString`, err)
+            return
+          }
+          result = reply
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 添加联系人分类
+   */
+  maillistAdd(maillist: IMailListBase): Promise<IResult> {
+    return this.request(
+      `${apiHost}mloperate.php?do=maillist-add`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+        method: 'POST',
+        form: maillist,
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`bestedm-api/src/index.ts:646 parseString`, err)
+            return
+          }
+          result = reply
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 添加联系人分类
+   */
+  maillistEdit(id: string, maillist: IMailListBase): Promise<IResult> {
+    return this.request(
+      `${apiHost}mloperate.php?do=maillist-edit&id=${encodeURIComponent(id)}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+        method: 'POST',
+        form: maillist,
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`bestedm-api/src/index.ts:674 parseString`, err)
+            return
+          }
+          result = reply
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 删除联系人分类
+   */
+  maillistDel(id: string): Promise<IResult> {
+    return this.request(
+      `${apiHost}mloperate.php?do=maillist-del&${querystring.stringify({
+        id,
+      })}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`bestedm-api/src/index.ts:702 parseString`, err)
+            return
+          }
+          result = reply
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 导出联系人分类地址
+   */
+  subscriptionExport(id: string): Promise<{ email: string; name: string }[]> {
+    return this.request(
+      `${apiHost}mloperate.php?do=subscription-export&${querystring.stringify(
+        id
+      )}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      },
+      text => {
+        return text
+          .trim()
+          .split(/\n/)
+          .map(line => {
+            const items = line.split(/\s+/)
+            return {
+              email: items[0],
+              name: items[1],
+            }
+          })
+      }
+    )
+  }
+  /**
    * 获取用户群发任务列表
    */
   taskList(): Promise<{ task_list: { task: ITask[] } }> {
@@ -319,7 +729,7 @@ export class BestEdm extends RequestBase {
           { explicitArray: false, trim: true },
           (err, reply) => {
             if (err) {
-              console.log(`bestedm-api/src/index.ts:338 parseString`, err)
+              console.log(`bestedm-api/src/index.ts:760 parseString`, err)
               return
             }
             result = reply

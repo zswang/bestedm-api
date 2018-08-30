@@ -1,7 +1,7 @@
 {
   "name": "bestedm-api",
-  "version": "1.0.3",
-  "description": "",
+  "version": "0.0.2",
+  "description": "bestedm API",
   "main": "index.js",
   "scripts": {
     "_update_version": "node version.js",
