@@ -200,9 +200,9 @@ export interface IMailList extends IMailListBase {
 }
 
 export interface IAddrBase {
-  list_id: string
-  address: string
-  fullname: string
+  list_id?: string
+  address?: string
+  fullname?: string
 
   sex?: 'F' | 'M'
   birthday?: string
@@ -851,6 +851,36 @@ export class BestEdm extends RequestBase {
         method: 'POST',
         form: {
           ml_addr: params.ml_addr,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`^linenum parseString`, err)
+            return
+          }
+          result = reply
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 修改联系人分类下的地址
+   * @param id 地址 id
+   * @param addr
+   */
+  mlAddrEdit(id: string, addr: IAddrBase) {
+    return this.request(
+      `${apiHost}mloperate.php?do=ml-addr-edit&${querystring.stringify({
+        id,
+      })}&${querystring.stringify(addr)}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
         },
       },
       text => {

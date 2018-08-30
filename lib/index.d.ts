@@ -170,9 +170,9 @@ export interface IMailList extends IMailListBase {
     count: string;
 }
 export interface IAddrBase {
-    list_id: string;
-    address: string;
-    fullname: string;
+    list_id?: string;
+    address?: string;
+    fullname?: string;
     sex?: 'F' | 'M';
     birthday?: string;
     phone?: string;
@@ -362,6 +362,12 @@ export declare class BestEdm extends RequestBase {
         separate?: string;
         ml_addr: string;
     }): Promise<IResult>;
+    /**
+     * 修改联系人分类下的地址
+     * @param id 地址 id
+     * @param addr
+     */
+    mlAddrEdit(id: string, addr: IAddrBase): Promise<any>;
     /**
      * 获取用户群发任务列表
      */

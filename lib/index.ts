@@ -186,9 +186,9 @@ export interface IMailList extends IMailListBase {
   count: string
 }
 export interface IAddrBase {
-  list_id: string
-  address: string
-  fullname: string
+  list_id?: string
+  address?: string
+  fullname?: string
   sex?: 'F' | 'M'
   birthday?: string
   phone?: string
@@ -835,6 +835,36 @@ export class BestEdm extends RequestBase {
     )
   }
   /**
+   * 修改联系人分类下的地址
+   * @param id 地址 id
+   * @param addr
+   */
+  mlAddrEdit(id: string, addr: IAddrBase) {
+    return this.request(
+      `${apiHost}mloperate.php?do=ml-addr-edit&${querystring.stringify({
+        id,
+      })}&${querystring.stringify(addr)}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`bestedm-api/src/index.ts:890 parseString`, err)
+            return
+          }
+          result = reply
+        })
+        return result
+      }
+    )
+  }
+  /**
    * 获取用户群发任务列表
    */
   taskList(): Promise<{ task_list: { task: ITask[] } }> {
@@ -854,7 +884,7 @@ export class BestEdm extends RequestBase {
           { explicitArray: false, trim: true },
           (err, reply) => {
             if (err) {
-              console.log(`bestedm-api/src/index.ts:889 parseString`, err)
+              console.log(`bestedm-api/src/index.ts:919 parseString`, err)
               return
             }
             result = reply
