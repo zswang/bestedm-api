@@ -204,7 +204,7 @@ export interface IAddrBase {
   address: string
   fullname: string
 
-  sex?: string
+  sex?: 'F' | 'M'
   birthday?: string
   phone?: string
   area?: string
@@ -804,7 +804,7 @@ export class BestEdm extends RequestBase {
   /**
    * 获取联系人分类下的地址信息或者单个地址信息
    */
-  mlAddrAdd(addr: IAddrBase) {
+  mlAddrAdd(addr: IAddrBase): Promise<IResult> {
     return this.request(
       `${apiHost}mloperate.php?do=ml-addr-add&${querystring.stringify(addr)}`,
       {
@@ -812,6 +812,45 @@ export class BestEdm extends RequestBase {
           Authorization: `Basic ${new Buffer(
             `${this.options.user}:${this.options.pass}`
           ).toString('base64')}`,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`^linenum parseString`, err)
+            return
+          }
+          result = reply
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 批量增加联系人分类下的地址
+   */
+  mlAddrAdds(params: {
+    list_id: string
+    addr_type?: string
+    separate?: string
+    ml_addr: string
+  }): Promise<IResult> {
+    return this.request(
+      `${apiHost}mloperate.php?do=ml-addr-add&${querystring.stringify({
+        list_id: params.list_id,
+        addr_type: params.addr_type,
+        separate: params.separate,
+      })}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+        method: 'POST',
+        form: {
+          ml_addr: params.ml_addr,
         },
       },
       text => {

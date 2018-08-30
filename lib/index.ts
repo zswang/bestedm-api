@@ -185,6 +185,29 @@ export interface IMailList extends IMailListBase {
   id: string
   count: string
 }
+export interface IAddrBase {
+  list_id: string
+  address: string
+  fullname: string
+  sex?: 'F' | 'M'
+  birthday?: string
+  phone?: string
+  area?: string
+  var1?: string
+  var2?: string
+  var3?: string
+  var4?: string
+  var5?: string
+  var6?: string
+  var7?: string
+  var8?: string
+  var9?: string
+  var10?: string
+}
+export interface IAddr extends IAddrBase {
+  id: string
+  time: string
+}
 export class BestEdm extends RequestBase {
   options: IBaseEdmOptions
   constructor(options: IBaseEdmOptions) {
@@ -208,7 +231,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:226 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:253 parseString`, err)
             return
           }
           result = reply
@@ -234,7 +257,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:253 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:280 parseString`, err)
             return
           }
           result = reply
@@ -269,7 +292,7 @@ export class BestEdm extends RequestBase {
           { explicitArray: false, trim: true },
           (err, reply) => {
             if (err) {
-              console.log(`bestedm-api/src/index.ts:289 parseString`, err)
+              console.log(`bestedm-api/src/index.ts:316 parseString`, err)
               return
             }
             result = reply
@@ -300,7 +323,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:321 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:348 parseString`, err)
             return
           }
           result = reply
@@ -376,7 +399,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:400 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:427 parseString`, err)
             return
           }
           result = reply
@@ -411,7 +434,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:436 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:463 parseString`, err)
             return
           }
           result = reply
@@ -438,7 +461,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:464 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:491 parseString`, err)
             return
           }
           result = reply
@@ -470,7 +493,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:497 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:524 parseString`, err)
             return
           }
           result = reply
@@ -497,7 +520,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:525 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:552 parseString`, err)
             return
           }
           result = reply
@@ -524,7 +547,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:553 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:580 parseString`, err)
             return
           }
           result = reply
@@ -552,7 +575,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:582 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:609 parseString`, err)
             return
           }
           result = reply
@@ -587,7 +610,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:618 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:645 parseString`, err)
             return
           }
           result = reply
@@ -615,7 +638,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:646 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:673 parseString`, err)
             return
           }
           result = reply
@@ -643,7 +666,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:674 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:701 parseString`, err)
             return
           }
           result = reply
@@ -671,7 +694,7 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:702 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:729 parseString`, err)
             return
           }
           result = reply
@@ -718,7 +741,7 @@ export class BestEdm extends RequestBase {
     keyword?: string
     page?: number
     limit?: number
-  }): Promise<{ email: string; name: string }[]> {
+  }): Promise<{ data: { total_num: string; addr: IAddr[] } }> {
     return this.request(
       `${apiHost}mloperate.php?do=ml-addr-list&${querystring.stringify(
         params
@@ -734,7 +757,75 @@ export class BestEdm extends RequestBase {
         let result = null
         xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
           if (err) {
-            console.log(`bestedm-api/src/index.ts:765 parseString`, err)
+            console.log(`bestedm-api/src/index.ts:792 parseString`, err)
+            return
+          }
+          result = reply
+          if (result.data && !(result.data.addr instanceof Array)) {
+            result.data.addr = [result.data.addr]
+          }
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 获取联系人分类下的地址信息或者单个地址信息
+   */
+  mlAddrAdd(addr: IAddrBase): Promise<IResult> {
+    return this.request(
+      `${apiHost}mloperate.php?do=ml-addr-add&${querystring.stringify(addr)}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`bestedm-api/src/index.ts:821 parseString`, err)
+            return
+          }
+          result = reply
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 批量增加联系人分类下的地址
+   */
+  mlAddrAdds(params: {
+    list_id: string
+    addr_type?: string
+    separate?: string
+    ml_addr: string
+  }): Promise<IResult> {
+    return this.request(
+      `${apiHost}mloperate.php?do=ml-addr-add&${querystring.stringify({
+        list_id: params.list_id,
+        addr_type: params.addr_type,
+        separate: params.separate,
+      })}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+        method: 'POST',
+        form: {
+          ml_addr: params.ml_addr,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`bestedm-api/src/index.ts:860 parseString`, err)
             return
           }
           result = reply
@@ -763,7 +854,7 @@ export class BestEdm extends RequestBase {
           { explicitArray: false, trim: true },
           (err, reply) => {
             if (err) {
-              console.log(`bestedm-api/src/index.ts:794 parseString`, err)
+              console.log(`bestedm-api/src/index.ts:889 parseString`, err)
               return
             }
             result = reply

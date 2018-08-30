@@ -169,6 +169,29 @@ export interface IMailList extends IMailListBase {
     id: string;
     count: string;
 }
+export interface IAddrBase {
+    list_id: string;
+    address: string;
+    fullname: string;
+    sex?: 'F' | 'M';
+    birthday?: string;
+    phone?: string;
+    area?: string;
+    var1?: string;
+    var2?: string;
+    var3?: string;
+    var4?: string;
+    var5?: string;
+    var6?: string;
+    var7?: string;
+    var8?: string;
+    var9?: string;
+    var10?: string;
+}
+export interface IAddr extends IAddrBase {
+    id: string;
+    time: string;
+}
 export declare class BestEdm extends RequestBase {
     options: IBaseEdmOptions;
     constructor(options: IBaseEdmOptions);
@@ -321,9 +344,24 @@ export declare class BestEdm extends RequestBase {
         page?: number;
         limit?: number;
     }): Promise<{
-        email: string;
-        name: string;
-    }[]>;
+        data: {
+            total_num: string;
+            addr: IAddr[];
+        };
+    }>;
+    /**
+     * 获取联系人分类下的地址信息或者单个地址信息
+     */
+    mlAddrAdd(addr: IAddrBase): Promise<IResult>;
+    /**
+     * 批量增加联系人分类下的地址
+     */
+    mlAddrAdds(params: {
+        list_id: string;
+        addr_type?: string;
+        separate?: string;
+        ml_addr: string;
+    }): Promise<IResult>;
     /**
      * 获取用户群发任务列表
      */
