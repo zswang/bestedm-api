@@ -312,6 +312,19 @@ export declare class BestEdm extends RequestBase {
         name: string;
     }[]>;
     /**
+     * 获取联系人分类下的地址信息或者单个地址信息
+     */
+    mlAddrList(params: {
+        list_id?: string;
+        address_id?: string;
+        keyword?: string;
+        page?: number;
+        limit?: number;
+    }): Promise<{
+        email: string;
+        name: string;
+    }[]>;
+    /**
      * 获取用户群发任务列表
      */
     taskList(): Promise<{

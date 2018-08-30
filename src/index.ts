@@ -199,6 +199,33 @@ export interface IMailList extends IMailListBase {
   count: string
 }
 
+export interface IAddrBase {
+  list_id: string
+  address: string
+  fullname: string
+
+  sex?: string
+  birthday?: string
+  phone?: string
+  area?: string
+
+  var1?: string
+  var2?: string
+  var3?: string
+  var4?: string
+  var5?: string
+  var6?: string
+  var7?: string
+  var8?: string
+  var9?: string
+  var10?: string
+}
+
+export interface IAddr extends IAddrBase {
+  id: string
+  time: string
+}
+
 export class BestEdm extends RequestBase {
   options: IBaseEdmOptions
   constructor(options: IBaseEdmOptions) {
@@ -713,9 +740,9 @@ export class BestEdm extends RequestBase {
    */
   subscriptionExport(id: string): Promise<{ email: string; name: string }[]> {
     return this.request(
-      `${apiHost}mloperate.php?do=subscription-export&${querystring.stringify(
-        id
-      )}`,
+      `${apiHost}mloperate.php?do=subscription-export&${querystring.stringify({
+        id,
+      })}`,
       {
         headers: {
           Authorization: `Basic ${new Buffer(
@@ -734,6 +761,69 @@ export class BestEdm extends RequestBase {
               name: items[1],
             }
           })
+      }
+    )
+  }
+  /**
+   * 获取联系人分类下的地址信息或者单个地址信息
+   */
+  mlAddrList(params: {
+    list_id?: string
+    address_id?: string
+    keyword?: string
+    page?: number
+    limit?: number
+  }): Promise<{ data: { total_num: string; addr: IAddr[] } }> {
+    return this.request(
+      `${apiHost}mloperate.php?do=ml-addr-list&${querystring.stringify(
+        params
+      )}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`^linenum parseString`, err)
+            return
+          }
+          result = reply
+          if (result.data && !(result.data.addr instanceof Array)) {
+            result.data.addr = [result.data.addr]
+          }
+        })
+        return result
+      }
+    )
+  }
+  /**
+   * 获取联系人分类下的地址信息或者单个地址信息
+   */
+  mlAddrAdd(addr: IAddrBase) {
+    return this.request(
+      `${apiHost}mloperate.php?do=ml-addr-add&${querystring.stringify(addr)}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`^linenum parseString`, err)
+            return
+          }
+          result = reply
+        })
+        return result
       }
     )
   }

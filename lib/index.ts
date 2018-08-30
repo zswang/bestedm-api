@@ -685,9 +685,9 @@ export class BestEdm extends RequestBase {
    */
   subscriptionExport(id: string): Promise<{ email: string; name: string }[]> {
     return this.request(
-      `${apiHost}mloperate.php?do=subscription-export&${querystring.stringify(
-        id
-      )}`,
+      `${apiHost}mloperate.php?do=subscription-export&${querystring.stringify({
+        id,
+      })}`,
       {
         headers: {
           Authorization: `Basic ${new Buffer(
@@ -706,6 +706,40 @@ export class BestEdm extends RequestBase {
               name: items[1],
             }
           })
+      }
+    )
+  }
+  /**
+   * 获取联系人分类下的地址信息或者单个地址信息
+   */
+  mlAddrList(params: {
+    list_id?: string
+    address_id?: string
+    keyword?: string
+    page?: number
+    limit?: number
+  }): Promise<{ email: string; name: string }[]> {
+    return this.request(
+      `${apiHost}mloperate.php?do=ml-addr-list&${querystring.stringify(
+        params
+      )}`,
+      {
+        headers: {
+          Authorization: `Basic ${new Buffer(
+            `${this.options.user}:${this.options.pass}`
+          ).toString('base64')}`,
+        },
+      },
+      text => {
+        let result = null
+        xml2js.parseString(text, { explicitArray: false }, (err, reply) => {
+          if (err) {
+            console.log(`bestedm-api/src/index.ts:765 parseString`, err)
+            return
+          }
+          result = reply
+        })
+        return result
       }
     )
   }
@@ -729,7 +763,7 @@ export class BestEdm extends RequestBase {
           { explicitArray: false, trim: true },
           (err, reply) => {
             if (err) {
-              console.log(`bestedm-api/src/index.ts:760 parseString`, err)
+              console.log(`bestedm-api/src/index.ts:794 parseString`, err)
               return
             }
             result = reply
